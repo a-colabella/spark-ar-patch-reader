@@ -7,5 +7,11 @@ import (
 )
 
 func main() {
-  fmt.Println(arputil.ReadArp(os.Args[1]))
+  patch := arputil.ReadArp(os.Args[1])
+  fmt.Println(arputil.GetName(patch))
+  fmt.Println("Input ports:", arputil.CountInputPorts(patch))
+  fmt.Println("Output ports:", arputil.CountOutputPorts(patch))
+  fmt.Println("Patches:", arputil.CountPatches(patch))
+  fmt.Println("Connections:", arputil.CountConnections(patch))
+
 }

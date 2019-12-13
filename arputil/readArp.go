@@ -1,10 +1,9 @@
 /*
-  This go file opens and returns .arp json data
+  This go program opens and returns .arp json data
 */
 package arputil
 
 import (
-  "fmt"
   "io"
   "io/ioutil"
   "os"
@@ -66,10 +65,8 @@ func ReadArp(filename string) map[string]interface{} {
   defer zip_file.Close()
 
   // Copy .arp file to .zip file
-  copied, err := io.Copy(zip_file, arp_file)
+  _, err = io.Copy(zip_file, arp_file)
   check(err)
-
-  fmt.Println("Copied %d bytes.", copied)
 
   // Read json data
   output := getJson(zip_filename)
