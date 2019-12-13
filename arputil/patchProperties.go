@@ -4,86 +4,61 @@
 
 package arputil
 
-// Gets the name of the patch
-func GetName(patch map[string]interface{}) string {
+import "strconv"
+
+func patchModel(patch map[string]interface{}, property string) string {
   children := patch["children"].([]interface{})
   first_child := children[0].(map[string]interface{})
-  name := first_child["name"].(string)
-  return name
+  model_name := ""
+
+  switch property {
+  case "name":
+    return first_child["name"].(string)
+  case "input":
+    model_name = "patch_input_ports_model"
+  case "output":
+    model_name = "patch_output_ports_model"
+  case "patches":
+    model_name = "patches_model"
+  case "connections":
+    model_name = "connections_model"
+  }
+
+  grandchildren := first_child["children"].([]interface{})
+  var xs map[string]interface{}
+
+  for _, grandchild := range grandchildren {
+    if grandchild.(map[string]interface{})["modelName"] == model_name {
+      xs = grandchild.(map[string]interface{})
+    }
+  }
+
+  ys := xs["children"].([]interface{})
+
+  return strconv.Itoa(len(ys))
+}
+
+// Gets the name of the patch
+func GetName(patch map[string]interface{}) string {
+  return patchModel(patch, "name")
 }
 
 // Returns the number of input ports in the group patch
-func CountInputPorts(patch map[string]interface{}) int {
-  children := patch["children"].([]interface{})
-  first_child := children[0].(map[string]interface{})
-  grandchildren := first_child["children"].([]interface{})
-
-  var input_ports map[string]interface{}
-
-  for _, grandchild := range grandchildren {
-    if grandchild.(map[string]interface{})["modelName"] == "patch_input_ports_model" {
-      input_ports = grandchild.(map[string]interface{})
-    }
-  }
-
-  input_children := input_ports["children"].([]interface{})
-
-  return len(input_children)
+func CountInputPorts(patch map[string]interface{}) string {
+  return patchModel(patch, "input")
 }
 
 // Returns the number of patches in the group patch
-func CountPatches(patch map[string]interface{}) int {
-  children := patch["children"].([]interface{})
-  first_child := children[0].(map[string]interface{})
-  grandchildren := first_child["children"].([]interface{})
-
-  var patches map[string]interface{}
-
-  for _, grandchild := range grandchildren {
-    if grandchild.(map[string]interface{})["modelName"] == "patches_model" {
-      patches = grandchild.(map[string]interface{})
-    }
-  }
-
-  patch_children := patches["children"].([]interface{})
-
-  return len(patch_children)
+func CountPatches(patch map[string]interface{}) string {
+  return patchModel(patch, "patches")
 }
 
 // Returns the number of connections in the group patch
-func CountConnections(patch map[string]interface{}) int {
-  children := patch["children"].([]interface{})
-  first_child := children[0].(map[string]interface{})
-  grandchildren := first_child["children"].([]interface{})
-
-  var connections map[string]interface{}
-
-  for _, grandchild := range grandchildren {
-    if grandchild.(map[string]interface{})["modelName"] == "connections_model" {
-      connections = grandchild.(map[string]interface{})
-    }
-  }
-
-  connection_children := connections["children"].([]interface{})
-
-  return len(connection_children)
+func CountConnections(patch map[string]interface{}) string {
+  return patchModel(patch, "connections")
 }
 
 // Returns the number of output ports in the group patch
-func CountOutputPorts(patch map[string]interface{}) int {
-  children := patch["children"].([]interface{})
-  first_child := children[0].(map[string]interface{})
-  grandchildren := first_child["children"].([]interface{})
-
-  var output_ports map[string]interface{}
-
-  for _, grandchild := range grandchildren {
-    if grandchild.(map[string]interface{})["modelName"] == "patch_output_ports_model" {
-      output_ports = grandchild.(map[string]interface{})
-    }
-  }
-
-  output_children := output_ports["children"].([]interface{})
-
-  return len(output_children)
+func CountOutputPorts(patch map[string]interface{}) string {
+  return patchModel(patch, "output")
 }
