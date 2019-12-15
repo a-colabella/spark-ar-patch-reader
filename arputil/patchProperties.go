@@ -6,59 +6,49 @@ package arputil
 
 import "strconv"
 
-func patchModel(patch map[string]interface{}, property string) string {
-  children := patch["children"].([]interface{})
-  first_child := children[0].(map[string]interface{})
-  model_name := ""
+func patchModel(patch Patch, property string) string {
+  var result string
+  var xs int
 
-  switch property {
-  case "name":
-    return first_child["name"].(string)
-  case "input":
-    model_name = "patch_input_ports_model"
-  case "output":
-    model_name = "patch_output_ports_model"
-  case "patches":
-    model_name = "patches_model"
-  case "connections":
-    model_name = "connections_model"
-  }
+  if property == "name" {
+    result = patch.Children[0].Name
+  } else {
+    grandchildren := patch.Children[0].Children
 
-  grandchildren := first_child["children"].([]interface{})
-  var xs map[string]interface{}
-
-  for _, grandchild := range grandchildren {
-    if grandchild.(map[string]interface{})["modelName"] == model_name {
-      xs = grandchild.(map[string]interface{})
+    for _, grandchild := range grandchildren {
+      if grandchild.ModelName == property {
+        xs = len(grandchild.Children)
+      }
     }
+
+    result = strconv.Itoa(xs)
   }
 
-  ys := xs["children"].([]interface{})
+  return result
 
-  return strconv.Itoa(len(ys))
 }
 
 // Gets the name of the patch
-func GetName(patch map[string]interface{}) string {
+func GetName(patch Patch) string {
   return patchModel(patch, "name")
 }
 
 // Returns the number of input ports in the group patch
-func CountInputPorts(patch map[string]interface{}) string {
-  return patchModel(patch, "input")
+func CountInputPorts(patch Patch) string {
+  return patchModel(patch, "patch_input_ports_model")
 }
 
 // Returns the number of patches in the group patch
-func CountPatches(patch map[string]interface{}) string {
-  return patchModel(patch, "patches")
+func CountPatches(patch Patch) string {
+  return patchModel(patch, "patches_model")
 }
 
 // Returns the number of connections in the group patch
-func CountConnections(patch map[string]interface{}) string {
-  return patchModel(patch, "connections")
+func CountConnections(patch Patch) string {
+  return patchModel(patch, "connections_model")
 }
 
 // Returns the number of output ports in the group patch
-func CountOutputPorts(patch map[string]interface{}) string {
-  return patchModel(patch, "output")
+func CountOutputPorts(patch Patch) string {
+  return patchModel(patch, "patch_output_ports_model")
 }

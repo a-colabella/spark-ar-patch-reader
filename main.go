@@ -13,5 +13,4 @@ func main() {
   fmt.Println("Output ports:", arputil.CountOutputPorts(patch))
   fmt.Println("Patches:", arputil.CountPatches(patch))
   fmt.Println("Connections:", arputil.CountConnections(patch))
-
 }

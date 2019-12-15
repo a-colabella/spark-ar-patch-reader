@@ -26,9 +26,9 @@ func newName(ext string, name string) string {
 }
 
 // Reads json data from zipped arp
-func getJson(src string) map[string]interface{} {
+func getJson(src string) Patch {
   // Map of json
-  var result map[string]interface{}
+  var result Patch
   // Open
   arch, err := zip.OpenReader(src)
   check(err)
@@ -50,7 +50,7 @@ func getJson(src string) map[string]interface{} {
 }
 
 // Reads a .arp file
-func ReadArp(filename string) map[string]interface{} {
+func ReadArp(filename string) Patch {
   // Create name of zip of .arp
   zip_filename := newName("zip", filename)
 
