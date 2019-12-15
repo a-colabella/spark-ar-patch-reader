@@ -6,6 +6,8 @@ package arputil
 
 import "strconv"
 
+// Accepts an input patch and a property string
+// and returns the corresponding name or count as string
 func patchModel(patch Patch, property string) string {
   var result string
   var xs int
@@ -25,7 +27,6 @@ func patchModel(patch Patch, property string) string {
   }
 
   return result
-
 }
 
 // Gets the name of the patch
